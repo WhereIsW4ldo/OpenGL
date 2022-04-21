@@ -20,10 +20,13 @@ int delta = 0;
 
 bool anim_ver = false, anim_hor = false, anim_rot = false;
 bool up = true, right = true;
+bool smooth = false;
 
 bool am_wit = true, dig_glbl = true, spec_ro = true, spot = true;
 int spotHoek = 30;
+int spotHoogte = 0;
 int exp_ = 20;
+bool doorzichtig = false;
 
 GLfloat grijs[3][3] = {{0.22, 0.22, 0.22}, {0.33, 0.33, 0.33}, {0.11, 0.11, 0.11}};
 GLfloat wit[3][3] = {{0.66, 0.66, 0.66}, {0.77, 0.77, 0.77}, {0.55, 0.55, 0.55}};
@@ -45,6 +48,9 @@ GLfloat controlPoints[2][4][3] = {
     { {0, 0, 0},  {5, 0,  5}, {5, 0,  10}, {0, 0,  15} },
     { {0, 0, 0},  {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 };
+
+
+bool controle = false;
 
 int amount = 1;
 bool on[PARTS];
@@ -263,7 +269,7 @@ void toetsPress(unsigned char toets, int x_muis, int y_muis)
                 mode = 'a';
                 winReshapeFcn(winWidth, winHeight);
             break;
-        case 's':
+        case 'i':
             if (mode != 's')
                 mode = 's';
                 winReshapeFcn(winWidth, winHeight);
@@ -336,6 +342,21 @@ void toetsPress(unsigned char toets, int x_muis, int y_muis)
         case 'E':
             if (shininess > 0)
                 shininess -= 5;
+            break;
+        case 'h':
+            spotHoogte += 1;
+            break;
+        case 'H':
+            spotHoogte -= 1;
+            break;
+        case 'k':
+            controle = !controle;
+            break;
+        case 's':
+            smooth = !smooth;
+            break;
+        case 'f':
+            doorzichtig = !doorzichtig;
             break;
         default:
             int x;
@@ -452,16 +473,42 @@ void drawVakwerk(char vlak)
  */
 void drawCylinderVast()
 {
+    int am = 20;
     glPushMatrix();
 
         glTranslatef(0, HEIGHT, 0);
+
+        glPushMatrix();
+
+            glTranslatef(WIDTH/2, 0, WIDTH/2);
+            glBegin(GL_TRIANGLES);
+
+                float hoek = 2 * M_PI / am;
+                for (int i = 0; i < am; i++)
+                {
+                    glVertex3f(0, 0, 0);
+                    glVertex3f(WIDTH * cos(hoek * i), 0, WIDTH * sin(hoek * i));
+                    glVertex3f(WIDTH * cos(hoek * (i + 1)), 0, WIDTH * sin(hoek * (i + 1)));
+                }
+
+            glEnd();
+
+        glPopMatrix();
+
         glRotatef(90, 1, 0, 0);
         glTranslatef(WIDTH/2, WIDTH/2, -HEIGHT_CYL);
 
         GLUquadric* cyl = gluNewQuadric();
         gluQuadricDrawStyle(cyl, GLU_FILL);
 
-        gluCylinder(cyl, WIDTH, WIDTH, HEIGHT_CYL, 40, 1);
+        gluCylinder(cyl, WIDTH, WIDTH, HEIGHT_CYL, am, 1);
+        if (smooth)
+        {
+            gluQuadricNormals(cyl, GLU_SMOOTH);
+        }
+        else 
+            gluQuadricNormals(cyl, GLU_FLAT);
+
 
     glPopMatrix();
 }
@@ -471,9 +518,26 @@ void drawCylinderVast()
  */
 void drawCylinderLos()
 {
+    int am = 20;
     glPushMatrix();
 
         glTranslatef(0, HEIGHT+ HEIGHT_CYL, 0);
+        glPushMatrix();
+
+            glTranslatef(WIDTH/2, HEIGHT_CYL, WIDTH/2);
+            glBegin(GL_TRIANGLES);
+
+                float hoek = 2 * M_PI / am;
+                for (int i = 0; i < am; i++)
+                {
+                    glVertex3f(0, 0, 0);
+                    glVertex3f(WIDTH * cos(hoek * i), 0, WIDTH * sin(hoek * i));
+                    glVertex3f(WIDTH * cos(hoek * (i + 1)), 0, WIDTH * sin(hoek * (i + 1)));
+                }
+
+            glEnd();
+
+        glPopMatrix();
         glRotatef(90, 1, 0, 0);
         glTranslatef(WIDTH/2, WIDTH/2, -HEIGHT_CYL);
 
@@ -481,8 +545,14 @@ void drawCylinderLos()
 
         GLUquadric* cyl = gluNewQuadric();
         gluQuadricDrawStyle(cyl, GLU_FILL);
-
-        gluCylinder(cyl, WIDTH, WIDTH, HEIGHT_CYL, 50, 1);
+        gluCylinder(cyl, WIDTH, WIDTH, HEIGHT_CYL, am, 1);
+        if (smooth)
+        {
+            gluQuadricNormals(cyl, GLU_SMOOTH);
+            printf("smooth as fuck boy");
+        }
+        else 
+            gluQuadricNormals(cyl, GLU_FLAT);
 
     glPopMatrix();
 }
@@ -661,9 +731,24 @@ void drawBalDing()
         glPopMatrix();
         glPushMatrix();
             
-
             glTranslatef(0, -length_kabel, 0);
-            glutSolidSphere(bol_dia , 20, 20);
+            // glutSolidSphere(bol_dia , 20, 20);
+            // draw complex B-spline surface
+
+            GLfloat knot[8] = {0, 0, 0, 0, 1, 1, 1, 1};
+
+            GLfloat ctlpoints[4][4][3] = {
+                {{-3, -3, -3}, {-3, -1, -3}, {-3, 1, -3}, {-3, 3, -3}},
+                {{-2, -3, -3}, {-2, -1, -1}, {-2, 1, -1}, {-2, 3, -3}},
+                {{-1, -3, -3}, {-1, -1, 1}, {-1, 1, 1}, {-1, 3, -3}},
+                {{0, -3, -3}, {0, -1, 3}, {0, 1, 3}, {0, 3, -3}}
+            };
+
+            GLUnurbsObj *oppNaam = gluNewNurbsRenderer();
+            gluBeginSurface(oppNaam);
+            gluNurbsSurface(oppNaam, 8, knot, 8, knot, 4*3, 3, &ctlpoints[0][0][0], 4, 4, GL_MAP2_VERTEX_3);
+            gluEndSurface(oppNaam);
+            gluDeleteNurbsRenderer(oppNaam);
 
         glPopMatrix();
     glPopMatrix();
@@ -678,7 +763,7 @@ void drawKabine()
     // spot rotatie geven etc.
     glPushMatrix();
     
-        GLfloat pos4[] = {0, 0, 0, 1};
+        GLfloat pos4[] = {0, spotHoogte, 0, 1};
         
         GLfloat richting[] = {1, -1, 0}; // xy-richting
         glTranslatef(10, 16, -10);
@@ -695,12 +780,28 @@ void drawKabine()
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
     glPushMatrix(); // front panel of kabine
 
-        glEnable(GL_BLEND);
-        glDepthMask(GL_FALSE);
+        if (doorzichtig)
+        {
+            glEnable(GL_BLEND);
+            glDepthMask(GL_FALSE);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
         glTranslatef(10, 0, -15);
 
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        if (controle)
+        {
+            glBegin(GL_LINE_STRIP);
 
+            for (int i = 0; i < 6; i++)
+                for (int j = 0; j < 4; j++)
+                {
+                    glVertex3fv(ctrlpoints[i][j]);
+                }
+
+            glEnd();
+        }
+        
         glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 4, 0.0, 1.0, 12, 6, &ctrlpoints[0][0][0]);
         glEnable(GL_MAP2_VERTEX_3);
 
@@ -710,9 +811,12 @@ void drawKabine()
         {
             glEvalMesh2(GL_LINE, 0, 20, 0, 20);
         }
-        glDisable(GL_MAP2_VERTEX_3);
-        glDepthMask(GL_TRUE);
-        glDisable(GL_BLEND);
+        if (doorzichtig)
+        {
+            glDisable(GL_MAP2_VERTEX_3);
+            glDepthMask(GL_TRUE);
+            glDisable(GL_BLEND);
+        }
     
     glPopMatrix();
     glPushMatrix(); // top plane that connects with front
@@ -724,11 +828,6 @@ void drawKabine()
 
         glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
         glEvalMesh2(draw, 0, 20, 0, 20);
-        if (draad)
-        {
-
-            glEvalMesh2(GL_LINE, 0, 20, 0, 20);
-        }
         glDisable(GL_MAP2_VERTEX_3);
 
     glPopMatrix();
@@ -823,16 +922,24 @@ void drawGewichten()
 
 
             glTranslatef(-10 * i, 0, -7.5);
+            if (controle)
+            {
+                glBegin(GL_LINE_STRIP);
+
+                for (int i = 0; i < 6; i++)
+                    for (int j = 0; j < 4; j++)
+                    {
+                        glVertex3fv(ctrlpoints[i][j]);
+                    }
+
+                glEnd();
+            }
             glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 4, 0.0, 1.0, 12, 6, &ctrlpoints[0][0][0]);
             glEnable(GL_MAP2_VERTEX_3);
 
             glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
             glEvalMesh2(draw, 0, 20, 0, 20);
-            if (draad)
-            {
-
-                glEvalMesh2(GL_LINE, 0, 20, 0, 20);
-            }
+            
             glDisable(GL_MAP2_VERTEX_3);
         
         glPopMatrix();
@@ -844,11 +951,7 @@ void drawGewichten()
 
             glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
             glEvalMesh2(draw, 0, 20, 0, 20);
-            if (draad)
-            {
-
-                glEvalMesh2(GL_LINE, 0, 20, 0, 20);
-            }
+            
             glDisable(GL_MAP2_VERTEX_3);
 
         glPopMatrix();
@@ -860,11 +963,7 @@ void drawGewichten()
 
             glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
             glEvalMesh2(draw, 0, 20, 0, 20);
-            if (draad)
-            {
-
-                glEvalMesh2(GL_LINE, 0, 20, 0, 20);
-            }
+            
             glDisable(GL_MAP2_VERTEX_3);
 
         glPopMatrix();
