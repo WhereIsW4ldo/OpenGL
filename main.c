@@ -50,6 +50,7 @@ int amount = 1;
 bool on[PARTS];
 bool as = false;
 bool draad = false;
+int draw = GL_FILL;
 int tijd = 16;
 
 /*
@@ -158,6 +159,11 @@ void displayFcn(void)
         drawKraan();
         glTranslatef(0, 0, 40);
     }
+
+    if (draad)
+        draw = GL_LINE;
+    else
+        draw = GL_FILL;
     glPopMatrix();
 
     glDisable(GL_LIGHTING);
@@ -367,12 +373,15 @@ void drawAssen()
 {
     glBegin(GL_LINES);
 
+        glColor3f(1, 0, 0);
         glVertex3d(0, 0, 0);
         glVertex3d(100, 0, 0);
 
+        glColor3f(0, 1, 0);
         glVertex3d(0, 0, 0);
         glVertex3d(0, 100, 0);
 
+        glColor3f(0, 0, 1);
         glVertex3d(0, 0, 0);
         glVertex3d(0, 0, 100);
     glEnd();
@@ -690,11 +699,13 @@ void drawKabine()
         glDepthMask(GL_FALSE);
         glTranslatef(10, 0, -15);
 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 4, 0.0, 1.0, 12, 6, &ctrlpoints[0][0][0]);
         glEnable(GL_MAP2_VERTEX_3);
 
         glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
-        glEvalMesh2(GL_FILL, 0, 20, 0, 20);
+        glEvalMesh2(draw, 0, 20, 0, 20);
         if (draad)
         {
             glEvalMesh2(GL_LINE, 0, 20, 0, 20);
@@ -712,7 +723,7 @@ void drawKabine()
         glEnable(GL_MAP2_VERTEX_3);
 
         glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
-        glEvalMesh2(GL_FILL, 0, 20, 0, 20);
+        glEvalMesh2(draw, 0, 20, 0, 20);
         if (draad)
         {
 
@@ -729,7 +740,7 @@ void drawKabine()
         glEnable(GL_MAP2_VERTEX_3);
 
         glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
-        glEvalMesh2(GL_FILL, 0, 20, 0, 20);
+        glEvalMesh2(draw, 0, 20, 0, 20);
         if (draad)
         {
 
@@ -816,7 +827,7 @@ void drawGewichten()
             glEnable(GL_MAP2_VERTEX_3);
 
             glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
-            glEvalMesh2(GL_FILL, 0, 20, 0, 20);
+            glEvalMesh2(draw, 0, 20, 0, 20);
             if (draad)
             {
 
@@ -832,7 +843,7 @@ void drawGewichten()
             glEnable(GL_MAP2_VERTEX_3);
 
             glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
-            glEvalMesh2(GL_FILL, 0, 20, 0, 20);
+            glEvalMesh2(draw, 0, 20, 0, 20);
             if (draad)
             {
 
@@ -848,7 +859,7 @@ void drawGewichten()
             glEnable(GL_MAP2_VERTEX_3);
 
             glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
-            glEvalMesh2(GL_FILL, 0, 20, 0, 20);
+            glEvalMesh2(draw, 0, 20, 0, 20);
             if (draad)
             {
 
