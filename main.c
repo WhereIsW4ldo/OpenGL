@@ -10,7 +10,7 @@ int x_cam = 100, y_cam = 100, z_cam = 100;
 int x_cam_f = 150, y_cam_f = 150, z_cam_f = 150;
 GLdouble xwmin = -100, xwmax = 100, ywmin = -100, ywmax = 100;
 GLdouble near = 0.1, far = 1000;
-char mode = 'o';
+char mode = 's';
 const float coo[4][3] = {{0, HEIGHT/2.0, 0}, {WIDTH, HEIGHT/2.0, 0},{0, HEIGHT/2.0, WIDTH}, {WIDTH, HEIGHT/2.0, WIDTH}};
 int angle = 0;
 float afstand_bal = 50;
@@ -465,8 +465,6 @@ void drawVakwerk(char vlak)
     glPopMatrix();
     glPopMatrix();
 }
-
-
 /*
  * void drawCylinderVast(): 
  * draws cylinder that does not rotate
@@ -760,65 +758,6 @@ void drawBalDing()
 void drawKabine()
 {
 
-    // spot rotatie geven etc.
-    glPushMatrix();
-    
-        GLfloat pos4[] = {0, spotHoogte, 0, 1};
-        
-        GLfloat richting[] = {1, -1, 0}; // xy-richting
-        glTranslatef(10, 16, -10);
-        glLightfv(GL_LIGHT3, GL_POSITION, pos4);
-        glLightf(GL_LIGHT3, GL_SPOT_CUTOFF, spotHoek);
-        glLightfv(GL_LIGHT3, GL_SPOT_DIRECTION, richting);
-        glLightf(GL_LIGHT3, GL_SPOT_EXPONENT,exp_);
-
-    glPopMatrix();
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, wit[0]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, wit[1]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, wit[2]);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
-    glPushMatrix(); // front panel of kabine
-
-        if (doorzichtig)
-        {
-            glEnable(GL_BLEND);
-            glDepthMask(GL_FALSE);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
-
-        glTranslatef(10, 0, -15);
-
-        if (controle)
-        {
-            glBegin(GL_LINE_STRIP);
-
-            for (int i = 0; i < 6; i++)
-                for (int j = 0; j < 4; j++)
-                {
-                    glVertex3fv(ctrlpoints[i][j]);
-                }
-
-            glEnd();
-        }
-        
-        glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 4, 0.0, 1.0, 12, 6, &ctrlpoints[0][0][0]);
-        glEnable(GL_MAP2_VERTEX_3);
-
-        glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
-        glEvalMesh2(draw, 0, 20, 0, 20);
-        if (draad)
-        {
-            glEvalMesh2(GL_LINE, 0, 20, 0, 20);
-        }
-        if (doorzichtig)
-        {
-            glDisable(GL_MAP2_VERTEX_3);
-            glDepthMask(GL_TRUE);
-            glDisable(GL_BLEND);
-        }
-    
-    glPopMatrix();
     glPushMatrix(); // top plane that connects with front
 
 
@@ -894,6 +833,65 @@ void drawKabine()
         glRotatef(90, 0, 1, 0);
         glRectf(-7.5, 0, 7.5, 15);
 
+    glPopMatrix();
+    // spot rotatie geven etc.
+    glPushMatrix();
+    
+        GLfloat pos4[] = {0, spotHoogte, 0, 1};
+        
+        GLfloat richting[] = {1, -1, 0}; // xy-richting
+        glTranslatef(10, 16, -10);
+        glLightfv(GL_LIGHT3, GL_POSITION, pos4);
+        glLightf(GL_LIGHT3, GL_SPOT_CUTOFF, spotHoek);
+        glLightfv(GL_LIGHT3, GL_SPOT_DIRECTION, richting);
+        glLightf(GL_LIGHT3, GL_SPOT_EXPONENT,exp_);
+
+    glPopMatrix();
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, wit[0]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, wit[1]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, wit[2]);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    glPushMatrix(); // front panel of kabine
+
+        if (doorzichtig)
+        {
+            glEnable(GL_BLEND);
+            glDepthMask(GL_FALSE);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
+        glTranslatef(10, 0, -15);
+
+        if (controle)
+        {
+            glBegin(GL_LINE_STRIP);
+
+            for (int i = 0; i < 6; i++)
+                for (int j = 0; j < 4; j++)
+                {
+                    glVertex3fv(ctrlpoints[i][j]);
+                }
+
+            glEnd();
+        }
+        
+        glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 4, 0.0, 1.0, 12, 6, &ctrlpoints[0][0][0]);
+        glEnable(GL_MAP2_VERTEX_3);
+
+        glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
+        glEvalMesh2(draw, 0, 20, 0, 20);
+        if (draad)
+        {
+            glEvalMesh2(GL_LINE, 0, 20, 0, 20);
+        }
+        if (doorzichtig)
+        {
+            glDisable(GL_MAP2_VERTEX_3);
+            glDepthMask(GL_TRUE);
+            glDisable(GL_BLEND);
+        }
+    
     glPopMatrix();
 }
 /*
