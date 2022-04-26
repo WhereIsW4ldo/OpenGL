@@ -29,7 +29,7 @@ int exp_ = 20;
 bool doorzichtig = false;
 
 GLfloat grijs[3][3] = {{0.22, 0.22, 0.22}, {0.33, 0.33, 0.33}, {0.11, 0.11, 0.11}};
-GLfloat wit[3][3] = {{0.66, 0.66, 0.66}, {0.77, 0.77, 0.77}, {0.55, 0.55, 0.55}};
+GLfloat wit[3][4] = {{0.66, 0.66, 0.66, 0.2}, {0.77, 0.77, 0.77, 0.1}, {0.55, 0.55, 0.55, 0.3}};
 GLfloat chroom[3][3] = {{0.46, 0.58, 0.35}, {0.23, 0.29, 0.17}, {0.69, 0.87, 0.52}};
 GLfloat brons[3][3] = {{0.21, 0.13, 0.10}, {0.39, 0.27, 0.17}, {0.71, 0.43, 0.18}};
 GLfloat geel[3][3] = {{0.65, 0.55, 0.15}, {0.75, 0.45, 0.15}, {0.85, 0.35, 0.15}};
@@ -178,7 +178,7 @@ void displayFcn(void)
     glDisable(GL_LIGHT2);
     glDisable(GL_LIGHT3);
 
-    glFlush();
+    glutSwapBuffers();
 }
 /*
  * void drawKraan(): 
@@ -218,7 +218,7 @@ void drawKraan()
 int main(int argc, char* argv[])
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(winWidth, winHeight);
     glutCreateWindow("Crane or something");
