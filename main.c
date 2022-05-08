@@ -59,6 +59,9 @@ bool draad = false;
 int draw = GL_FILL;
 int tijd = 16;
 
+bool mist = false;
+bool exp_fog = false;
+
 /*
  * void init(): 
  * clear screen, fix that depth is tested, look with camera on x_cam, y_cam, z_cam to 0, 5, 0;
@@ -140,6 +143,22 @@ void displayFcn(void)
 
     glPushMatrix();
 
+    if (mist)
+    {
+        glEnable(GL_FOG);
+        GLfloat kleur[4] = {0.0, 0.0, 0.0, 1};
+        glFogfv(GL_FOG_COLOR, kleur);
+        if (!exp_fog)
+        {
+            glFogf(GL_FOG_MODE, GL_LINEAR);
+            glFogf(GL_FOG_START, 100);
+            glFogf(GL_FOG_END, 200);
+        }
+        else
+        {
+            glFogf(GL_FOG_MODE, GL_EXP);
+        }
+    }
 
     GLfloat pos1[] = {100, 0, 0, 1};
     glLightfv(GL_LIGHT0, GL_POSITION, pos1);
@@ -177,6 +196,7 @@ void displayFcn(void)
     glDisable(GL_LIGHT1);
     glDisable(GL_LIGHT2);
     glDisable(GL_LIGHT3);
+    glDisable(GL_FOG);
 
     glutSwapBuffers();
 }
@@ -357,6 +377,12 @@ void toetsPress(unsigned char toets, int x_muis, int y_muis)
             break;
         case 'f':
             doorzichtig = !doorzichtig;
+            break;
+        case 'm':
+            mist = !mist;
+            break;
+        case 'M':
+            exp_fog = !exp_fog;
             break;
         default:
             int x;
