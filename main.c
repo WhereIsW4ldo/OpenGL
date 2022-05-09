@@ -765,7 +765,7 @@ void drawKabine()
     
         GLfloat pos4[] = {0, spotHoogte, 0, 1};
         
-        GLfloat richting[] = {1, -1, 0}; // xy-richting
+        GLfloat richting[] = {afstand_bal - 10, -(length_kabel + 16), 0}; // xy-richting
         glTranslatef(10, 16, -10);
         glLightfv(GL_LIGHT3, GL_POSITION, pos4);
         glLightf(GL_LIGHT3, GL_SPOT_CUTOFF, spotHoek);
