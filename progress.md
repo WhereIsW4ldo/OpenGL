@@ -49,5 +49,5 @@ kasseien) weergegeven worden;
 bij de materiaaleigenschappen van dit doorzichtig oppervlak een gepaste α nemen, zodat
 o.a. de achter- en zijwanden en de bovenste platte schijf zichtbaar zijn;
 
-[ ] mist (uitbreiding): met fog kan ervoor gezorgd worden dat bij meerdere kranen de achterste kraan een waziger uitzicht krijgt (in/uitschakelen met toets m); met M kan eventueel
+[x] mist (uitbreiding): met fog kan ervoor gezorgd worden dat bij meerdere kranen de achterste kraan een waziger uitzicht krijgt (in/uitschakelen met toets m); met M kan eventueel
 het exponenti¨ele effect geactiveerd worden.

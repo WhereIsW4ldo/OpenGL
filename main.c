@@ -10,7 +10,7 @@ int x_cam = 100, y_cam = 100, z_cam = 100;
 int x_cam_f = 150, y_cam_f = 150, z_cam_f = 150;
 GLdouble xwmin = -100, xwmax = 100, ywmin = -100, ywmax = 100;
 GLdouble near = 0.1, far = 1000;
-char mode = 'o';
+char mode = 's';
 const float coo[4][3] = {{0, HEIGHT/2.0, 0}, {WIDTH, HEIGHT/2.0, 0},{0, HEIGHT/2.0, WIDTH}, {WIDTH, HEIGHT/2.0, WIDTH}};
 int angle = 0;
 float afstand_bal = 50;
@@ -29,7 +29,7 @@ int exp_ = 20;
 bool doorzichtig = false;
 
 GLfloat grijs[3][3] = {{0.22, 0.22, 0.22}, {0.33, 0.33, 0.33}, {0.11, 0.11, 0.11}};
-GLfloat wit[3][3] = {{0.66, 0.66, 0.66}, {0.77, 0.77, 0.77}, {0.55, 0.55, 0.55}};
+GLfloat wit[3][4] = {{0.66, 0.66, 0.66, 0.2}, {0.77, 0.77, 0.77, 0.1}, {0.55, 0.55, 0.55, 0.3}};
 GLfloat chroom[3][3] = {{0.46, 0.58, 0.35}, {0.23, 0.29, 0.17}, {0.69, 0.87, 0.52}};
 GLfloat brons[3][3] = {{0.21, 0.13, 0.10}, {0.39, 0.27, 0.17}, {0.71, 0.43, 0.18}};
 GLfloat geel[3][3] = {{0.65, 0.55, 0.15}, {0.75, 0.45, 0.15}, {0.85, 0.35, 0.15}};
@@ -58,6 +58,9 @@ bool as = false;
 bool draad = false;
 int draw = GL_FILL;
 int tijd = 16;
+
+bool mist = false;
+bool exp_fog = false;
 
 /*
  * void init(): 
@@ -140,6 +143,22 @@ void displayFcn(void)
 
     glPushMatrix();
 
+    if (mist)
+    {
+        glEnable(GL_FOG);
+        GLfloat kleur[4] = {0.0, 0.0, 0.0, 1};
+        glFogfv(GL_FOG_COLOR, kleur);
+        if (!exp_fog)
+        {
+            glFogf(GL_FOG_MODE, GL_LINEAR);
+            glFogf(GL_FOG_START, 100);
+            glFogf(GL_FOG_END, 200);
+        }
+        else
+        {
+            glFogf(GL_FOG_MODE, GL_EXP);
+        }
+    }
 
     GLfloat pos1[] = {100, 0, 0, 1};
     glLightfv(GL_LIGHT0, GL_POSITION, pos1);
@@ -177,8 +196,9 @@ void displayFcn(void)
     glDisable(GL_LIGHT1);
     glDisable(GL_LIGHT2);
     glDisable(GL_LIGHT3);
+    glDisable(GL_FOG);
 
-    glFlush();
+    glutSwapBuffers();
 }
 /*
  * void drawKraan(): 
@@ -218,7 +238,7 @@ void drawKraan()
 int main(int argc, char* argv[])
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(winWidth, winHeight);
     glutCreateWindow("Crane or something");
@@ -358,6 +378,12 @@ void toetsPress(unsigned char toets, int x_muis, int y_muis)
         case 'f':
             doorzichtig = !doorzichtig;
             break;
+        case 'm':
+            mist = !mist;
+            break;
+        case 'M':
+            exp_fog = !exp_fog;
+            break;
         default:
             int x;
             x = ((int) toets) - 48;
@@ -465,8 +491,6 @@ void drawVakwerk(char vlak)
     glPopMatrix();
     glPopMatrix();
 }
-
-
 /*
  * void drawCylinderVast(): 
  * draws cylinder that does not rotate
@@ -894,6 +918,65 @@ void drawKabine()
         glRotatef(90, 0, 1, 0);
         glRectf(-7.5, 0, 7.5, 15);
 
+    glPopMatrix();
+    // spot rotatie geven etc.
+    glPushMatrix();
+    
+        GLfloat pos4[] = {0, spotHoogte, 0, 1};
+        
+        GLfloat richting[] = {1, -1, 0}; // xy-richting
+        glTranslatef(10, 16, -10);
+        glLightfv(GL_LIGHT3, GL_POSITION, pos4);
+        glLightf(GL_LIGHT3, GL_SPOT_CUTOFF, spotHoek);
+        glLightfv(GL_LIGHT3, GL_SPOT_DIRECTION, richting);
+        glLightf(GL_LIGHT3, GL_SPOT_EXPONENT,exp_);
+
+    glPopMatrix();
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, wit[0]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, wit[1]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, wit[2]);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    glPushMatrix(); // front panel of kabine
+
+        if (doorzichtig)
+        {
+            glEnable(GL_BLEND);
+            glDepthMask(GL_FALSE);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
+        glTranslatef(10, 0, -15);
+
+        if (controle)
+        {
+            glBegin(GL_LINE_STRIP);
+
+            for (int i = 0; i < 6; i++)
+                for (int j = 0; j < 4; j++)
+                {
+                    glVertex3fv(ctrlpoints[i][j]);
+                }
+
+            glEnd();
+        }
+        
+        glMap2f(GL_MAP2_VERTEX_3, 0.0, 1.0, 3, 4, 0.0, 1.0, 12, 6, &ctrlpoints[0][0][0]);
+        glEnable(GL_MAP2_VERTEX_3);
+
+        glMapGrid2f(20, 0.0, 1.0, 20, 0.0, 1.0);
+        glEvalMesh2(draw, 0, 20, 0, 20);
+        if (draad)
+        {
+            glEvalMesh2(GL_LINE, 0, 20, 0, 20);
+        }
+        if (doorzichtig)
+        {
+            glDisable(GL_MAP2_VERTEX_3);
+            glDepthMask(GL_TRUE);
+            glDisable(GL_BLEND);
+        }
+    
     glPopMatrix();
 }
 /*
