@@ -5,27 +5,34 @@
 #include <stdbool.h>
 #include "all.h"
 
+// variabelen voor camera instellingen
 GLint winWidth = 800, winHeight = 800;
 int x_cam = 100, y_cam = 100, z_cam = 100;
 int x_cam_f = 150, y_cam_f = 150, z_cam_f = 150;
 GLdouble xwmin = -100, xwmax = 100, ywmin = -100, ywmax = 100;
 GLdouble near = 0.1, far = 1000;
 char mode = 's';
+
 const float coo[4][3] = {{0, HEIGHT/2.0, 0}, {WIDTH, HEIGHT/2.0, 0},{0, HEIGHT/2.0, WIDTH}, {WIDTH, HEIGHT/2.0, WIDTH}};
+
+// variabelen voor animaties en bewegingen
 int angle = 0;
 float afstand_bal = 50;
 float length_kabel = 10;
 int bol_dia = 3;
 int delta = 0;
 
+// variabelen voor animaties aan/uit te zetten
 bool anim_ver = false, anim_hor = false, anim_rot = false;
 bool up = true, right = true;
 bool smooth = false;
 
+// variabelen voor licht en texturen
 bool am_wit = true, dig_glbl = true, spec_ro = true, spot = true;
 int spotHoek = 30;
 int spotHoogte = 0;
 int exp_ = 20;
+bool controle = false;
 bool doorzichtig = false;
 
 GLfloat grijs[3][3] = {{0.22, 0.22, 0.22}, {0.33, 0.33, 0.33}, {0.11, 0.11, 0.11}};
@@ -49,9 +56,7 @@ GLfloat controlPoints[2][4][3] = {
     { {0, 0, 0},  {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}
 };
 
-
-bool controle = false;
-
+// variabelen voor specifiek te laten zien
 int amount = 1;
 bool on[PARTS];
 bool as = false;
@@ -59,6 +64,7 @@ bool draad = false;
 int draw = GL_FILL;
 int tijd = 16;
 
+// variabelen voor mist
 bool mist = false;
 bool exp_fog = false;
 
@@ -213,11 +219,11 @@ void drawKraan()
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
         drawBalk();
     }
+    glMaterialfv ( GL_FRONT_AND_BACK , GL_AMBIENT , chroom[0]);
+    glMaterialfv ( GL_FRONT_AND_BACK , GL_DIFFUSE , chroom[1]);
+    glMaterialfv ( GL_FRONT_AND_BACK , GL_SPECULAR , chroom[2]);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
     if (on[1]){
-        glMaterialfv ( GL_FRONT_AND_BACK , GL_AMBIENT , chroom[0]);
-        glMaterialfv ( GL_FRONT_AND_BACK , GL_DIFFUSE , chroom[1]);
-        glMaterialfv ( GL_FRONT_AND_BACK , GL_SPECULAR , chroom[2]);
-        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
         drawVakwerk('a');
     }
     if (on[2])
@@ -275,15 +281,9 @@ void toetsPress(unsigned char toets, int x_muis, int y_muis)
     }
     switch (toets)
     {
-        case 'g':
-            anim_hor = !anim_hor;
-            break;
-        case 'G':
-            anim_ver = !anim_ver;
-            break;
-        case 'r':
-            anim_rot = !anim_rot;
-            break;
+        case 'g': anim_hor = !anim_hor; break;
+        case 'G': anim_ver = !anim_ver; break;
+        case 'r': anim_rot = !anim_rot; break;
         case 'p':
             if (mode != 'a')
                 mode = 'a';
@@ -299,91 +299,45 @@ void toetsPress(unsigned char toets, int x_muis, int y_muis)
                 mode = 'o';
                 winReshapeFcn(winWidth, winHeight);
             break;
-        case 'n':
-            amount += 1;
-            break;
+        case 'n': amount += 1; break;
         case 'N':
             if (amount > 1)
                 amount -= 1;
             break;
-        case 'x':
-            *x += 1;
-            break;
-        case 'X':
-            *x -= 1;
-            break;
-        case 'y':
-            *y += 1;
-            break;
-        case 'Y':
-            *y -= 1;
-            break;
-        case 'z':
-            *z += 1;
-            break;
-        case 'Z':
-            *z -= 1;
-            break;
-        case 'j':
-            as = !as;
-            break;
-        case 'l':
-            draad = !draad;
-            break;
-        case 'a':
-            am_wit = !am_wit;
-            break;
-        case 'b':
-            dig_glbl = !dig_glbl;
-            break;
-        case 'c':
-            spec_ro = !spec_ro;
-            break;
-        case 'd':
-            spot = !spot;
-            break;
-        case 'v':
-            spotHoek += 1;
-            break;
+        case 'x': *x += 1; break;
+        case 'X': *x -= 1; break;
+        case 'y': *y += 1; break;
+        case 'Y': *y -= 1; break;
+        case 'z': *z += 1; break;
+        case 'Z': *z -= 1; break;
+        case 'j': as = !as; break;
+        case 'l': draad = !draad; break;
+        case 'a': am_wit = !am_wit; break;
+        case 'b': dig_glbl = !dig_glbl; break;
+        case 'c': spec_ro = !spec_ro; break;
+        case 'd': spot = !spot; break;
+        case 'v': spotHoek += 1; break;
         case 'V':
             if (spotHoek > 0)
                 spotHoek -= 1;
             break;
-        case 'w':
-            exp_ += 5;
-            break;
+        case 'w': exp_ += 5; break;
         case 'W':
             if (exp_ > 0)
                 exp_ -= 5;
             break;
-        case 'e':
-            shininess += 5;
-            break;
+        case 'e': shininess += 5; break;
         case 'E':
             if (shininess > 0)
                 shininess -= 5;
             break;
-        case 'h':
-            spotHoogte += 1;
-            break;
-        case 'H':
-            spotHoogte -= 1;
-            break;
-        case 'k':
-            controle = !controle;
-            break;
-        case 's':
-            smooth = !smooth;
-            break;
-        case 'f':
-            doorzichtig = !doorzichtig;
-            break;
-        case 'm':
-            mist = !mist;
-            break;
-        case 'M':
-            exp_fog = !exp_fog;
-            break;
+        case 'h': spotHoogte += 1; break;
+        case 'H': spotHoogte -= 1; break;
+        case 'k': controle = !controle; break;
+        case 's': smooth = !smooth; break;
+        case 'f': doorzichtig = !doorzichtig; break;
+        case 'm': mist = !mist; break;
+        case 'M': exp_fog = !exp_fog; break;
         default:
             int x;
             x = ((int) toets) - 48;
@@ -406,7 +360,6 @@ void drawBalk()
             glScalef(1, HEIGHT, 1);
 
             glutSolidCube(1);
-
             glutWireCube(1);
 
         glPopMatrix();
@@ -431,6 +384,7 @@ void drawAssen()
         glColor3f(0, 0, 1);
         glVertex3d(0, 0, 0);
         glVertex3d(0, 0, 100);
+         
     glEnd();
 }
 /*
@@ -571,10 +525,7 @@ void drawCylinderLos()
         gluQuadricDrawStyle(cyl, GLU_FILL);
         gluCylinder(cyl, WIDTH, WIDTH, HEIGHT_CYL, am, 1);
         if (smooth)
-        {
             gluQuadricNormals(cyl, GLU_SMOOTH);
-            printf("smooth as fuck boy");
-        }
         else 
             gluQuadricNormals(cyl, GLU_FLAT);
 
@@ -920,18 +871,7 @@ void drawKabine()
 
     glPopMatrix();
     // spot rotatie geven etc.
-    glPushMatrix();
     
-        GLfloat pos4[] = {0, spotHoogte, 0, 1};
-        
-        GLfloat richting[] = {1, -1, 0}; // xy-richting
-        glTranslatef(10, 16, -10);
-        glLightfv(GL_LIGHT3, GL_POSITION, pos4);
-        glLightf(GL_LIGHT3, GL_SPOT_CUTOFF, spotHoek);
-        glLightfv(GL_LIGHT3, GL_SPOT_DIRECTION, richting);
-        glLightf(GL_LIGHT3, GL_SPOT_EXPONENT,exp_);
-
-    glPopMatrix();
 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, wit[0]);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, wit[1]);
