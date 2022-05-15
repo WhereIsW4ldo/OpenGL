@@ -1,0 +1,177 @@
+\documentclass[a4paper, 12pt, one column]{article}
+
+%% Language and font encodings. This says how to do hyphenation on end of lines.
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage[clean]{svg}
+
+%% Sets page size and margins. You can edit this to your liking
+\usepackage[top=1.3cm, bottom=2.0cm, outer=2.5cm, inner=2.5cm, heightrounded,
+marginparwidth=1.5cm, marginparsep=0.4cm, margin=2.5cm]{geometry}
+
+%% Useful packages
+\usepackage{graphicx} %allows you to use jpg or png images. PDF is still recommended
+\graphicspath{ {./images/} }
+\usepackage[colorlinks=False]{hyperref} % add links inside PDF files
+\usepackage{amsmath}  % Math fonts
+\usepackage{amsfonts} %
+\usepackage{amssymb}  %
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{ 
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{white},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=0pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=1
+}
+
+\lstset{style=mystyle}
+
+%% Citation package
+\usepackage[authoryear]{natbib}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,open={(},close={)}}
+
+
+\title{Computergrafieken: Kraan}
+\author{Waldo Wautelet}
+
+\begin{document}
+\maketitle
+
+\section{Input-toetsen}
+
+\begin{itemize}
+    \setlength\itemsep{0em}
+    \item [g]: animatie last (horizontaal)
+    \item [G]: animatie last (verticaal)
+    \item [r]: animatie roteren
+    \item [p]: algemeen perspectief mode
+    \item [i]: specifiek perspectief mode
+    \item [o]: orthogonaal mode
+    \item [n]: een extra kraan tekenen
+    \item [N]: een kraan verwijderen (indien meer dan 1)
+    \item [x]: plus 1 op x-coordinaat
+    \item [X]: min  1 op x-coordinaat
+    \item [y]: plus 1 op y-coordinaat
+    \item [Y]: min  1 op y-coordinaat
+    \item [z]: plus 1 op z-coordinaat
+    \item [Z]: min  1 op z-coordinaat
+    \item [j]: laat de x, y, z-as zien
+    \item [l]: laat draad zien in bezier vlakken
+    \item [a]: ambient wit licht aan/uit zetten
+    \item [b]: diffuse groen-blauw licht aan/uit zetten
+    \item [c]: rood speculair licht aan/uit zetten
+    \item [d]: geel spot aan/uit zetten
+    \item [v]: spothoek vergroten
+    \item [V]: spothoek verkleinen
+    \item [w]: exponent spot vergroten
+    \item [W]: exponent spot verkleinen
+    \item [e]: shininess vergroten met 5
+    \item [E]: shininess verkleinen met 5
+    \item [h]: spot hoger plaatsen (op y-as)
+    \item [H]: spot lager plaatsen (op y-as)
+    \item [k]: controlepunten bezier-vlakken aan/uit zetten
+    \item [s]: smooth shading aan/uit zetten
+    \item [f]: doorzichtigheid beziervlak aan/uit zetten
+    \item [m]: mist aan/uit zetten
+    \item [M]: exponent/linear aan zetten (mist)
+    \item [default]: alle nummertjes tussen 0-9 laten elk enkel een deel zien van de kraan
+\end{itemize}
+
+Ik heb bij de input een bewuste keuze gemaakt wegens een mogelijks tekort aan toetsen.
+Ik heb gekozen om gebruik te maken van booleans om sommige variabelen te behandelen 
+zoals bijv. de animaties. Hierdoor moet ik maar 1 toets gebruiken om aan en uit te schakelen.
+Deze methode grbruik ik bij volgende variabelen:
+
+\begin{itemize}
+    \item animatie last (zowel horizontaal als verticaal)
+    \item animatie rotatie
+    \item draad laten zien
+    \item alle lichten
+    \item controlepunten laten zien
+    \item smooth shading
+    \item doorzichtigheid
+    \item alles rond mist
+    \item alle onderdelen apart laten zien
+\end{itemize}
+
+Bij het ingeven van de displaymodussen heb ik gebruik gemaakt van 2 coordinaten, omdat de frustum
+methode rare coordinaten gebruikt die ik niet zomaar kon gebruiken van de andere. 
+
+\section{Ontwikkelde methodes}
+
+In deze sectie wordt beschreven welke methodes er zijn en wat welke doet.
+
+\begin{lstlisting}[language=C]
+    void init(void);
+\end{lstlisting}
+In de init functie zit alle standaard code in die 1 keer moet uitgevoerd worden 
+en daarna niet meer. Hier zit een clear in van het scherm, de camera word geplaatst
+en alle lichten krijgen kun kleuren.
+
+\begin{lstlisting}[language=C]
+    void winReshapeFcn(GLint w, GLint h);
+\end{lstlisting}
+Deze functie word opgeroepen wanneer het venster verandert van grootte, hierin word
+een keuze gemaakt welk perspectief we willen gebruiken.
+
+\begin{lstlisting}[language=C]
+    void displayFcn(void)
+\end{lstlisting}
+Deze functie tekent alle onderdelen, plaatst de lichten (indien nodig) en tekent mist indien aangezet.
+Hierin wordt ook drawKraan opgeroepen (indien nodig meerdere keren met een translatie ertussen).
+
+\begin{lstlisting}[language=C]
+    void drawKraan();
+\end{lstlisting}
+De drawKraan functie tekent alle delen van de kraan indien deze aan staan.
+
+\begin{lstlisting}[language=C]
+    int main(int argc, char* argv[]);
+\end{lstlisting}
+De main functie bevat alle standaard initialiseringen voor openGL, ook word er een timer functie 
+doorgegeven en ten slotte nog een toetsenbord functie.
+
+\begin{lstlisting}[language=C]
+    void toetsPress(unsigned char toets, int x_muis, int y_muis);
+\end{lstlisting}
+Alle opties van toetsinvoer worden doorlopen en indien nodig aangepast, ik maak hier gebruik van 
+een switch.
+
+\begin{lstlisting}[language=C]
+    void drawBalk();
+\end{lstlisting}
+Deze functie tekent enkel de 4 verticale balken als een gevulde kubus en een lijntjes.
+
+\begin{lstlisting}[language=C]
+    void drawAssen();
+\end{lstlisting}
+Een functie die de 3 hoofdassen tekent in elk een ander kleurtje.
+
+\begin{lstlisting}[language=C]
+    void drawVakwerk(char vlak);
+\end{lstlisting}
+
+
+
+
+\bibliography{refs}
+\end{document}
