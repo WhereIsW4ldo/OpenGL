@@ -35,13 +35,28 @@ int exp_ = 20;
 bool controle = false;
 bool doorzichtig = false;
 
-GLfloat grijs[3][3] = {{0.22, 0.22, 0.22}, {0.33, 0.33, 0.33}, {0.11, 0.11, 0.11}};
-GLfloat wit[3][4] = {{0.66, 0.66, 0.66, 0.2}, {0.77, 0.77, 0.77, 0.1}, {0.55, 0.55, 0.55, 0.3}};
-GLfloat chroom[3][3] = {{0.46, 0.58, 0.35}, {0.23, 0.29, 0.17}, {0.69, 0.87, 0.52}};
-GLfloat brons[3][3] = {{0.21, 0.13, 0.10}, {0.39, 0.27, 0.17}, {0.71, 0.43, 0.18}};
-GLfloat geel[3][3] = {{0.65, 0.55, 0.15}, {0.75, 0.45, 0.15}, {0.85, 0.35, 0.15}};
-GLfloat lila[3][3] = {{0.45, 0.15, 0.75}, {0.55, 0.15, 0.65}, {0.35, 0.15, 0.85}};
+// GLfloat grijs[3][3] = {{0.22, 0.22, 0.22}, {0.33, 0.33, 0.33}, {0.11, 0.11, 0.11}};
+// GLfloat wit[3][4] = {{0.66, 0.66, 0.66, 0.2}, {0.77, 0.77, 0.77, 0.1}, {0.55, 0.55, 0.55, 0.3}};
+// GLfloat chroom[3][3] = {{0.46, 0.58, 0.35}, {0.23, 0.29, 0.17}, {0.69, 0.87, 0.52}};
+// GLfloat brons[3][3] = {{0.21, 0.13, 0.10}, {0.39, 0.27, 0.17}, {0.71, 0.43, 0.18}};
+// GLfloat geel[3][3] = {{0.65, 0.55, 0.15}, {0.75, 0.45, 0.15}, {0.85, 0.35, 0.15}};
+// GLfloat lila[3][3] = {{0.45, 0.15, 0.75}, {0.55, 0.15, 0.65}, {0.35, 0.15, 0.85}};
 GLfloat shininess = 10;
+GLfloat cabine[2][3][3] = {
+    {{0.22, 0.22, 0.22}, {0.33, 0.33, 0.33}, {0.11, 0.11, 0.11}},
+    {{0.66, 0.66, 0.66}, {0.77, 0.77, 0.77}, {0.55, 0.55, 0.55}}
+};
+
+GLfloat vakwerk[2][3][3] = {
+    {{0.46, 0.58, 0.35}, {0.23, 0.29, 0.17}, {0.69, 0.87, 0.52}},
+    {{0.21, 0.13, 0.10}, {0.39, 0.27, 0.17}, {0.71, 0.43, 0.18}}
+};
+GLfloat last[2][3][3] = {
+    {{0.65, 0.55, 0.15}, {0.75, 0.45, 0.15}, {0.85, 0.35, 0.15}},
+    {{0.45, 0.15, 0.75}, {0.55, 0.15, 0.65}, {0.35, 0.15, 0.85}}
+};
+
+int klCabine = 0, klVakwerk = 0, klLast = 0;
 
 GLfloat ctrlpoints[6][4][3] = {
     {{0, 0, 0}, {5, 0, 5}, {5, 0, 10}, {0, 0, 15}},
@@ -94,6 +109,11 @@ void init(void)
 
     for (int i = 0; i < PARTS; i++)
         on[i] = true;
+}
+
+void materiaalMenu(int id)
+{
+
 }
 
 /*
@@ -213,17 +233,17 @@ void displayFcn(void)
 void drawKraan()
 {
     if (on[0]){
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, grijs[0]);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, grijs[1]);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, grijs[2]);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, cabine[klCabine][0]);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, cabine[klCabine][1]);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, cabine[klCabine][2]);
         glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
         drawBalk();
     }
-    glMaterialfv ( GL_FRONT_AND_BACK , GL_AMBIENT , chroom[0]);
-    glMaterialfv ( GL_FRONT_AND_BACK , GL_DIFFUSE , chroom[1]);
-    glMaterialfv ( GL_FRONT_AND_BACK , GL_SPECULAR , chroom[2]);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
     if (on[1]){
+        glMaterialfv ( GL_FRONT_AND_BACK , GL_AMBIENT , vakwerk[klVakwerk][0]);
+        glMaterialfv ( GL_FRONT_AND_BACK , GL_DIFFUSE , vakwerk[klVakwerk][1]);
+        glMaterialfv ( GL_FRONT_AND_BACK , GL_SPECULAR , vakwerk[klVakwerk][2]);
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
         drawVakwerk('a');
     }
     if (on[2])
@@ -241,6 +261,34 @@ void drawKraan()
 
 }
 
+void menu1(int id)
+{
+    // 1 -> grijs, 2 -> witachtig
+    switch (id)
+    {
+        case 2: klCabine = 1; break;
+        case 1: klCabine = 0; break;
+    }
+}
+void menu2(int id)
+{
+    // 1 -> chroom, 1 -> brons
+    switch (id)
+    {
+        case 1: klVakwerk = 0; break;
+        case 2: klVakwerk = 1; break;
+    }
+}
+void menu3(int id)
+{
+    // 1 -> geel, 2 -> lila
+    switch (id)
+    {
+        case 1: klLast = 0; break;
+        case 2: klLast = 1; break;
+    }
+}
+
 int main(int argc, char* argv[])
 {
     glutInit(&argc, argv);
@@ -249,6 +297,27 @@ int main(int argc, char* argv[])
     glutInitWindowSize(winWidth, winHeight);
     glutCreateWindow("Crane or something");
     init();
+
+    GLint submenu1, submenu2, submenu3;
+
+    submenu1 = glutCreateMenu(menu1);
+    glutAddMenuEntry("grijs", 1);
+    glutAddMenuEntry("witachtig", 2);
+
+    submenu2 = glutCreateMenu(menu2);
+    glutAddMenuEntry("chroom", 1);
+    glutAddMenuEntry("brons", 2);
+
+    submenu3 = glutCreateMenu(menu3);
+    glutAddMenuEntry("geel", 1);
+    glutAddMenuEntry("lila", 2);
+
+    glutCreateMenu(materiaalMenu);
+    glutAddSubMenu("cabine", submenu1);
+    glutAddSubMenu("vakwerk", submenu2);
+    glutAddSubMenu("last", submenu3);
+    
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
 
     glutDisplayFunc(displayFcn);
     glutKeyboardFunc(toetsPress);
@@ -680,9 +749,9 @@ void drawVakwerkArm()
  */
 void drawBalDing()
 {
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, geel[0]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, geel[1]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, geel[2]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, last[klLast][0]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, last[klLast][1]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, last[klLast][2]);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 
     glPushMatrix();
@@ -749,9 +818,9 @@ void drawKabine()
 
     glPopMatrix();
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, wit[0]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, wit[1]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, wit[2]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, cabine[klCabine][0]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, cabine[klCabine][1]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, cabine[klCabine][2]);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
     glPushMatrix(); // front panel of kabine
 
@@ -824,9 +893,9 @@ void drawKabine()
 
     glPopMatrix();
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, grijs[0]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, grijs[1]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, grijs[2]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, cabine[klCabine][0]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, cabine[klCabine][1]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, cabine[klCabine][2]);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 
     glPushMatrix(); // right panel of kabine
@@ -873,9 +942,9 @@ void drawKabine()
     // spot rotatie geven etc.
     
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, wit[0]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, wit[1]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, wit[2]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, cabine[klCabine][0]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, cabine[klCabine][1]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, cabine[klCabine][2]);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
     glPushMatrix(); // front panel of kabine
 
@@ -934,9 +1003,9 @@ void drawGewichten()
 
     glPopMatrix();
 
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, lila[0]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, lila[1]);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, lila[2]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, last[klLast][0]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, last[klLast][1]);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, last[klLast][2]);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
 
     for (int i = 1; i <= 3; i++)

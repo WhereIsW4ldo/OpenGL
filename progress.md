@@ -22,7 +22,7 @@ licht en spoteffect wordt geplaatst op de cabine en gericht naar de last; deze l
 draait mee met de kraanarm en cabine; in de basisopgave voorzie je voor de cabine, het vakwerk van toren en arm en de last
 verschillende materiaaleigenschappen, bijv. grijs, brons en geel;
 
-[ ] menu (uitbreiding): kiezen van de materiaaleigenschappen van cabine, vakwerk en last:
+[x] menu (uitbreiding): kiezen van de materiaaleigenschappen van cabine, vakwerk en last:
 
 [x] toets: callback routine bij het indrukken van een toets. Voorzie x/X, y/Y , z/Z voor het
 verplaatsen van het oog; a/A, b/B, c/C, d/D voor het aan/uitschakelen van de lichtbronnen; s/S voor de keuze tussen FLAT en SMOOTH shading;
