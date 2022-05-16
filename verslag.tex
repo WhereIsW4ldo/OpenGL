@@ -169,9 +169,62 @@ Een functie die de 3 hoofdassen tekent in elk een ander kleurtje.
 \begin{lstlisting}[language=C]
     void drawVakwerk(char vlak);
 \end{lstlisting}
+Deze functie bevat alle logica om 1 van de vakwerken te maken, de functie krijgt als 
+variabelen slechts 1 character mee om te bepalen welk vakwerk het nu gaat tekenen.
+Voor elke mogelijke char word dan een rotatie en of translatie toegepast.
 
+\begin{lstlisting}[language=C]
+    void drawCylinderVast();
+\end{lstlisting}
+Een simpele functie om de onderste vaste cylinder te tekenen.
 
+\begin{lstlisting}[language=C]
+    void drawCylinderLos();
+\end{lstlisting}
+Een simpele functie om de bovenste losse cylinder te tekenen (die meedraait met het 
+verticale gedeelte).
 
+\begin{lstlisting}[language=C]
+    void drawTopPart();
+\end{lstlisting}
+Deze functie bevat alle onderdelen die aan het verticaal deel hangen en dus mee 
+geroteerd moeten worden. Het assenstelsel word verlegt om bovenop de losse cylinder
+te liggen.
+
+\begin{lstlisting}[language=C]
+    void drawArm();
+\end{lstlisting}
+De functie om de arm (verticaal deel) te tekenen inclusief 2 vakwerken die 
+geroteerd zijn. 
+
+\begin{lstlisting}[language=C]
+    void drawVakwerkArm();
+\end{lstlisting}
+Een specifieke functie om het vakwerk van de arm te tekenen.
+
+\begin{lstlisting}[language=C]
+    void drawBalDing();
+\end{lstlisting}
+Deze functie tekent de last, het touw en het ophangstukje. Hier word rekening gehouden
+met de animaties en rotaties die mogelijk kunnen plaatsvinden tijdens het tekenen.
+
+\begin{lstlisting}[language=C]
+    void drawKabine();
+\end{lstlisting}
+De functie die alles rond de kabine tekent, inclusief het glazen voorpaneel.
+Ook de spot word hier gedefinieerd (wegens het makkelijk zijn van coordinaten).
+
+\begin{lstlisting}[language=C]
+    void drawGewichten();
+\end{lstlisting}
+De functie om de 3 gewichten te tekenen. De voorkant van de gewichten zijn dezelfde 
+beziervlakken als het glas van de kabine.
+
+\begin{lstlisting}[language=C]
+    void animFunc(int delta);
+\end{lstlisting}
+De functie die alles behandelt van animaties, hier is een simpele if structuur genoeg
+om te bepalen welke variabelen met welke getallen opgeteld moeten worden.
 
 \bibliography{refs}
 \end{document}
