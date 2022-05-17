@@ -10,6 +10,8 @@
 #define HEIGHT_CYL 5
 
 #define PARTS 9
+#define AANT 3
+#define MAXL 20
 
 
 void specialToetsPress(int toets, int x_muis, int y_muis);
