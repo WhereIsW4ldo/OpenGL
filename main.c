@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "../jpeg/InitJPG.h"
 #include "all.h"
 
 // variabelen voor camera instellingen
@@ -34,6 +35,9 @@ int spotHoogte = 0;
 int exp_ = 20;
 bool controle = false;
 bool doorzichtig = false;
+
+char beeldnaam[AANT][MAXL] = {"cat.jpeg", "cat2.jpeg", "racoon.jpeg"};
+GLuint texName[AANT];
 
 // GLfloat grijs[3][3] = {{0.22, 0.22, 0.22}, {0.33, 0.33, 0.33}, {0.11, 0.11, 0.11}};
 // GLfloat wit[3][4] = {{0.66, 0.66, 0.66, 0.2}, {0.77, 0.77, 0.77, 0.1}, {0.55, 0.55, 0.55, 0.3}};
@@ -107,8 +111,26 @@ void init(void)
     glLightfv(GL_LIGHT3, GL_DIFFUSE, spot_);
     glLightfv(GL_LIGHT3, GL_SPECULAR, spot_);
 
+    tImageJPG *pImage;
+    int j;
+    glShadeModel(GL_FLAT);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures(AANT, texName);
+
+    for (j = 0; j < AANT; j++)
+    {
+
+	pImage = LoadJPG(beeldnaam[j]);
+	glBindTexture(GL_TEXTURE_2D, texName[j]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, pImage->sizeX, pImage->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pImage->data);
+	printf("sizeX: %d, sizeY: %d\n", pImage->sizeX, pImage->sizeY);
+    }
+
     for (int i = 0; i < PARTS; i++)
         on[i] = true;
+
+
+
 }
 
 void materiaalMenu(int id)
@@ -776,23 +798,36 @@ void drawBalDing()
         glPushMatrix();
             
             glTranslatef(0, -length_kabel, 0);
-            // glutSolidSphere(bol_dia , 20, 20);
+
+            GLUquadricObj *bol;
+            bol = gluNewQuadric();
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, texName[0]);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            gluQuadricTexture(bol, GL_TRUE);
+            gluQuadricDrawStyle(bol, GLU_FILL);
+            gluSphere(bol, 1, 20, 20);
+            gluDeleteQuadric(bol);
+            glDisable(GL_TEXTURE_2D);
+            
             // draw complex B-spline surface
 
-            GLfloat knot[8] = {0, 0, 0, 0, 1, 1, 1, 1};
+            // GLfloat knot[8] = {0, 0, 0, 0, 1, 1, 1, 1};
 
-            GLfloat ctlpoints[4][4][3] = {
-                {{-3, -3, -3}, {-3, -1, -3}, {-3, 1, -3}, {-3, 3, -3}},
-                {{-2, -3, -3}, {-2, -1, -1}, {-2, 1, -1}, {-2, 3, -3}},
-                {{-1, -3, -3}, {-1, -1, 1}, {-1, 1, 1}, {-1, 3, -3}},
-                {{0, -3, -3}, {0, -1, 3}, {0, 1, 3}, {0, 3, -3}}
-            };
+            // GLfloat ctlpoints[4][4][3] = {
+            //     {{-3, -3, -3}, {-3, -1, -3}, {-3, 1, -3}, {-3, 3, -3}},
+            //     {{-2, -3, -3}, {-2, -1, -1}, {-2, 1, -1}, {-2, 3, -3}},
+            //     {{-1, -3, -3}, {-1, -1, 1}, {-1, 1, 1}, {-1, 3, -3}},
+            //     {{0, -3, -3}, {0, -1, 3}, {0, 1, 3}, {0, 3, -3}}
+            // };
 
-            GLUnurbsObj *oppNaam = gluNewNurbsRenderer();
-            gluBeginSurface(oppNaam);
-            gluNurbsSurface(oppNaam, 8, knot, 8, knot, 4*3, 3, &ctlpoints[0][0][0], 4, 4, GL_MAP2_VERTEX_3);
-            gluEndSurface(oppNaam);
-            gluDeleteNurbsRenderer(oppNaam);
+            // GLUnurbsObj *oppNaam = gluNewNurbsRenderer();
+            // gluBeginSurface(oppNaam);
+            // gluNurbsSurface(oppNaam, 8, knot, 8, knot, 4*3, 3, &ctlpoints[0][0][0], 4, 4, GL_MAP2_VERTEX_3);
+            // gluEndSurface(oppNaam);
+            // gluDeleteNurbsRenderer(oppNaam);
 
         glPopMatrix();
     glPopMatrix();
@@ -900,18 +935,33 @@ void drawKabine()
 
     glPushMatrix(); // right panel of kabine
 
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_GEN_S);
+	glEnable(GL_TEXTURE_GEN_T);
+	glBindTexture(GL_TEXTURE_2D, texName[0]);
+
         glTranslatef(5, 7.5, -15);
         glScalef(10, 15, 1);
 
         glutSolidCube(1);
+	glDisable(GL_TEXTURE_GEN_S);
+	glDisable(GL_TEXTURE_GEN_T);
+	glDisable(GL_TEXTURE_2D);
 
     glPopMatrix();
     glPushMatrix(); // left panel of kabine
 
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_GEN_S);
+	glEnable(GL_TEXTURE_GEN_T);
+	glBindTexture(GL_TEXTURE_2D, texName[1]);
         glTranslatef(5, 7.5, 0);
         glScalef(10, 15, 1);
 
         glutSolidCube(1);
+	glDisable(GL_TEXTURE_GEN_S);
+	glDisable(GL_TEXTURE_GEN_T);
+	glDisable(GL_TEXTURE_2D);
 
     glPopMatrix();
     
@@ -1116,3 +1166,6 @@ void animFunc(int delta)
     glutTimerFunc(tijd, animFunc, delta);
     glutPostRedisplay();
 }
+
+
+

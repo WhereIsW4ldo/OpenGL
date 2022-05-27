@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex verslag"] 1652645872 "verslag.aux" "verslag.bbl" "verslag" 1652645872
+["bibtex verslag"] 1653676959 "verslag.aux" "verslag.bbl" "verslag" 1653676959
   "C:/Users/waldo/AppData/Roaming/MiKTeX/bibtex/bst/natbib/abbrvnat.bst" 1284455456 26532 66bed5cc59495faaa3f9ae9af9fa5e42 ""
   "refs.bib" 0 -1 0 ""
-  "verslag.aux" 1652645853 1028 aa8d393dd07f16063399826ef9477c95 "pdflatex"
+  "verslag.aux" 1653676958 1028 aa8d393dd07f16063399826ef9477c95 "pdflatex"
   (generated)
   "verslag.bbl"
   "verslag.blg"
-["pdflatex"] 1652645852 "c:/Users/waldo/Documents/Scholos/OpenGL/verslag.tex" "verslag.pdf" "verslag" 1652645872
+["pdflatex"] 1653676957 "c:/Users/waldo/Documents/Scholos/OpenGL/verslag.tex" "verslag.pdf" "verslag" 1653676959
   "C:/Program Files/MiKTeX/fonts/tfm/jknappen/ec/ecbx1728.tfm" 993061962 3204 d35cb76836b6cb4ed404dd64a550530d ""
   "C:/Program Files/MiKTeX/fonts/tfm/jknappen/ec/ecrm0600.tfm" 993062116 3160 116e21835795bb29209ae8bb4682382f ""
   "C:/Program Files/MiKTeX/fonts/tfm/jknappen/ec/ecrm1000.tfm" 993062122 3148 7e594c8240c71e432203f65ab5f95a51 ""
@@ -107,11 +107,11 @@
   "C:/Users/waldo/AppData/Roaming/MiKTeX/tex/latex/ucs/ucsencs.def" 1369148985 22806 c53c9d0d16c65bef2b157515c9d9f658 ""
   "C:/Users/waldo/AppData/Roaming/MiKTeX/tex/latex/ucs/uni-global.def" 1368440143 1375 8a855db83af5d6753ccbbd32e6a8a901 ""
   "C:/Users/waldo/AppData/Roaming/MiKTeX/tex/latex/ucs/utf8x.def" 1369148985 8240 21f7ac37aafb6cfeddbb196b8bfd6280 ""
-  "c:/Users/waldo/Documents/Scholos/OpenGL/verslag.tex" 1652645872 6227 d5d43ca4f6ec486ebc77a0d7ecef278a ""
-  "verslag.aux" 1652645853 1028 aa8d393dd07f16063399826ef9477c95 "pdflatex"
+  "c:/Users/waldo/Documents/Scholos/OpenGL/verslag.tex" 1653676956 8304 d5618623a61a21399f88a5d00a49448e ""
+  "verslag.aux" 1653676958 1028 aa8d393dd07f16063399826ef9477c95 "pdflatex"
   "verslag.bbl" 0 -1 0 "bibtex verslag"
-  "verslag.out" 1652645853 254 35fe246b15eabb47608048e5e4ec5c26 "pdflatex"
-  "verslag.tex" 1652645872 6227 d5d43ca4f6ec486ebc77a0d7ecef278a ""
+  "verslag.out" 1653676958 254 35fe246b15eabb47608048e5e4ec5c26 "pdflatex"
+  "verslag.tex" 1653676956 8304 d5618623a61a21399f88a5d00a49448e ""
   (generated)
   "verslag.aux"
   "verslag.log"
